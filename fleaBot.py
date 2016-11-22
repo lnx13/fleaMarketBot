@@ -9,7 +9,9 @@ import add
 from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters
 from log import *
 import config
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 def error(bot, update, error):
