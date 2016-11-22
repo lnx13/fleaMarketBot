@@ -4,7 +4,7 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardHide
 from telegram.ext import  ConversationHandler
 from log import *
-from item import Item
+from item import Items
 
 
 #add item conversation
@@ -14,13 +14,13 @@ def pre_publish(bot, update):
     '''check item before publish'''
     user = update.message.from_user
     reply_keyboard = [['/добавить', '/отмена',]]
-    update.message.reply_text('Все верно?\n' + str(Item.items[user.id]), reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
+    update.message.reply_text('Все верно?\n' + str(Items.get_item(user.id)), reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
 
 
 def add(bot, update):
     user = update.message.from_user
     update.message.reply_text('Что бы добавить товар на продажу, напишите его название. Если передумали в любой момент можно написать /отмена', reply_markup=ReplyKeyboardHide())
-    Item(user.id)
+    Items.create_item(user.id)
 
     return NAME
 
@@ -29,7 +29,7 @@ def name(bot, update):
     user = update.message.from_user
     itemName = update.message.text
     logger.info("Item name: %s" % (itemName))
-    Item.items[user.id].add_name(itemName)
+    Items.add_name(user.id, itemName)
 
     update.message.reply_text('Отлично! Теперь напишите описание товара', reply_markup=ReplyKeyboardHide())
 
@@ -42,7 +42,7 @@ def description(bot, update):
     user = update.message.from_user
     itemDescription = update.message.text
     logger.info("Item description: %s" % (itemDescription))
-    Item.items[user.id].add_description(itemDescription)
+    Items.add_description(user.id, itemDescription)
 
     update.message.reply_text('Последний шаг. Отправте фото товара или нажмите "пропустить"', reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
 
@@ -53,7 +53,7 @@ def photo(bot, update):
     user = update.message.from_user
     photo_id = update.message.photo[-1].file_id
     logger.info("Item photo id from %s: %s" % (user.first_name, photo_file))
-    Item.items[user.id].add_photo(photo_id)
+    Items.add_photo(user.id, photo_id)
 
     pre_publish(bot, update)
 
@@ -72,7 +72,7 @@ def cancel(bot, update):
     '''interupt adding'''
     user = update.message.from_user
     logger.info("User %s cancel :(" % (user.first_name,))
-    Item.items[user.id].del_item()
+    Items.del_item(user.id)
 
     return ConversationHandler.END
 
@@ -81,6 +81,6 @@ def publish(bot, update):
     user = update.message.from_user
 
     update.message.reply_text('Товар добавлен!', reply_markup=ReplyKeyboardHide())
-    Item.items[user.id].del_item()
+    Items.del_item(user.id)
 
     return ConversationHandler.END
