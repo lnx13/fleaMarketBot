@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import time
 
 class Item(object):
     '''Item class'''
@@ -7,34 +8,41 @@ class Item(object):
 
     def __init__(self, userID):
         '''Init item object and add it to class'''
-        self.__itemName = ''
-        self.__itemDescription = ''
-        self.__itemPhoto = ''
-        self.__userID = userID
+        self.itemName = ''
+        self.itemDescription = ''
+        self.itemPhoto = ''
+        self.userID = userID
+        self.ts = int(time.time())
 
 
     def add_name(self, name):
         '''add item name to object'''
-        self.__itemName = name
+        self.itemName = name
 
     def add_description(self, description):
         '''add item description to object'''
-        self.__itemDescription = description
+        self.itemDescription = description
 
     def add_photo(self, photo):
         '''add item photo to object'''
-        self.__itemPhoto = photo
+        self.itemPhoto = photo
 
     def get_photo(self):
         '''get photo id'''
-        return self.__itemPhoto
+        return self.itemPhoto
+
+    def get_ts(self):
+        return self.ts
+
+    def update_ts(self):
+        self.ts = int(time.time())
 
     def __str__(self):
         '''convert item to string'''
-        return self.__itemName + '\n' + self.__itemDescription
+        return self.itemName + '\n' + self.itemDescription
 
 class Items(object):
-    '''Items storage class'''
+    '''Items temporary storage class'''
 
     # {userID: itemObject}
     __items = {}
