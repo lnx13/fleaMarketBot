@@ -38,17 +38,17 @@ def main():
 
     #Add item
     add_handler = ConversationHandler(
-        entry_points=[CommandHandler('add', add.add)],
+        entry_points=[CommandHandler('add', add.add, pass_user_data=True)],
 
         states={
             add.NAME: [MessageHandler(Filters.text, add.name)],
             add.DESCRIPTION: [MessageHandler(Filters.text, add.description)],
             add.PHOTO: [MessageHandler(Filters.photo, add.photo),
                     RegexHandler(u'^пропустить$', add.skip_photo)],
-            add.PUBLISH: [CommandHandler(u'добавить', add.publish),],
+            add.PUBLISH: [CommandHandler(u'добавить', add.publish, pass_user_data=True),],
         },
 
-        fallbacks=[CommandHandler(u'отмена', add.cancel)]
+        fallbacks=[CommandHandler(u'отмена', add.cancel, pass_user_data=True)]
     )
 
     dp.add_handler(add_handler)

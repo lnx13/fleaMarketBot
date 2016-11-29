@@ -5,6 +5,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardHide
 from telegram.ext import  ConversationHandler
 from log import *
 from item import Items
+from db import database
 
 
 #add item conversation
@@ -17,7 +18,8 @@ def pre_publish(bot, update):
     update.message.reply_text('Все верно?\n' + str(Items.get_item(user.id)), reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
 
 
-def add(bot, update):
+def add(bot, update, user_data):
+    user_data['base'] = database()
     user = update.message.from_user
     update.message.reply_text('Что бы добавить товар на продажу, напишите его название. Если передумали в любой момент можно написать /отмена', reply_markup=ReplyKeyboardHide())
     Items.create_item(user.id)
@@ -68,19 +70,21 @@ def skip_photo(bot, update):
 
     return PUBLISH
 
-def cancel(bot, update):
+def cancel(bot, update, user_data):
     '''interupt adding'''
     user = update.message.from_user
+    del user_data['base']
     logger.info("User %s cancel :(" % (user.first_name,))
     Items.del_item(user.id)
 
     return ConversationHandler.END
 
-def publish(bot, update):
+def publish(bot, update, user_data):
     '''publish item'''
     user = update.message.from_user
-
+    user_data['base'].save_to_db(Items.del_item(user.id))
+    del user_data['base']
     update.message.reply_text('Товар добавлен!', reply_markup=ReplyKeyboardHide())
-    Items.del_item(user.id)
+
 
     return ConversationHandler.END
