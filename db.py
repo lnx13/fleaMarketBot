@@ -10,7 +10,7 @@ from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, or_
 
 
 class database(object):
-    '''database class for store items, objest should be created before use item'''
+    """database class for store items, objest should be created before use item"""
     Session=''
 
     def __init__(self):
@@ -22,7 +22,8 @@ class database(object):
                 Column('itemName', String),
                 Column('itemDescription', String),
                 Column('itemPhoto', String),
-                Column('userID',String),
+                Column('userID',Integer),
+                Column('username',String),
                 Column('ts', Integer)
             )
             metadata.create_all(engine)
@@ -31,20 +32,26 @@ class database(object):
         self.session = database.Session()
 
     def save_to_db(self, item):
-        '''save item to database'''
+        """save item to database"""
         self.session.add(item)
         self.session.commit()
 
-    def get_by_user(self, user):
-        '''get all items by userID'''
-        return self.session.query(Item).filter(Item.userID == user).all()
+    def get_by_userID(self, userID):
+        """get all items by userID"""
+        return self.session.query(Item).filter(Item.userID == userID).all()
 
-    def get_from_date(self, ts):
-        '''get all items from ts date'''
-        return self.session.query(Item).filter(Item.ts >= ts).all()
+    def get(self, ts=False):
+        """
+        :type ts: int|bool starting timestamp
+        """
+        query = self.session.query(Item)
+        if (ts): query.filter(Item.ts >= ts)
+
+        return query.all()
+
 
     def find(self, str):
-        '''find item by sting it name or description'''
+        """find item by sting it name or description"""
         return self.session.query(Item).filter(or_(Item.itemName.like('%'+str+'%'), Item.itemDescription.like('%'+str+'%'))).all()
 
     def __del__(self):

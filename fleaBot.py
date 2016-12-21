@@ -5,25 +5,33 @@
 Flea market bot
 """
 
-import add
-from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters, InlineQueryHandler
 from log import *
+import add
+import list
 import config
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
+import help
+import edit
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 def start(bot, update):
-    '''bot /start functions'''
-    update.message.reply_text('Хай! Я Барахолка-бот')
+    """bot /start functions"""
+    update.message.reply_text('Хай! Я Барахолка-бот!\nНапиши /help, чтобы узнать о моих возможностях.')
+
+# def help(bot, update):
+#     update.message.reply_text(
+#         '/add - добавить товар\n'
+#         '/list - показать все товары, которые сейчас продаются\n'
+#         '/subscribe - подписаться на новые товары'
+#     )
+
+def subscribe(bot, update):
+    update.message.reply_text('Меня этому еще не научили ' u'\U0001F614' ' Попробуй позже')
 
 def stilli(bot, update):
     update.message.reply_text('Стилли аццтой!(с)')
-
 
 def main():
     updater = Updater(config.token)
@@ -33,7 +41,9 @@ def main():
 
     # Simple commands
     dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", start))
+    dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("list", list.all))
+    dp.add_handler(CommandHandler("subscribe", subscribe))
     dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', stilli))
 
     #Add item
@@ -52,10 +62,11 @@ def main():
     )
 
     dp.add_handler(add_handler)
+
     #Del item
 
     #Edit item
-
+    dp.add_handler(CommandHandler("edit", edit.list_available))
 
     # log all errors
     dp.add_error_handler(error)
