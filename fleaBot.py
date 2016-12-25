@@ -4,11 +4,10 @@
 """
 Flea market bot
 """
-
 from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters
 
 import config
-from handlers import add, edit, list, subscription, help, delete, view, start, jokes
+from handlers import add, edit, list, subscription, help, delete, view, start, jokes, support
 from log import *
 
 
@@ -29,7 +28,7 @@ def main():
     # Просмотр
     dp.add_handler(CommandHandler("list", list.all))
     dp.add_handler(CommandHandler("view", view.all_items))
-    dp.add_handler(RegexHandler(u'^\/view(\d{1,})$', view.item, pass_groups=True))
+    dp.add_handler(RegexHandler('^\/view(\d{1,})$', view.item, pass_groups=True))
 
     # Подписка
     dp.add_handler(CommandHandler("subscribe", subscription.activate))
@@ -42,8 +41,7 @@ def main():
         states={
             add.NAME: [MessageHandler(Filters.text, add.name)],
             add.DESCRIPTION: [MessageHandler(Filters.text, add.description)],
-            add.PHOTO: [MessageHandler(Filters.photo, add.photo),
-                        CommandHandler('skip', add.skip_photo)],
+            add.PHOTO: [MessageHandler(Filters.photo, add.photo), CommandHandler('skip', add.skip_photo)],
             add.PUBLISH: [CommandHandler('publish', add.publish, pass_user_data=True), ],
         },
 
@@ -57,8 +55,9 @@ def main():
     dp.add_handler(CommandHandler("delete", delete.list_items))
     dp.add_handler(RegexHandler(u'^\/delete(\d{1,})$', delete.delete_item, pass_groups=True))
 
-    # Шутки
+    # Другое
     dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', jokes.stilli))
+    dp.add_handler(CommandHandler("support", support.support))
 
     # log all errors
     dp.add_error_handler(error)

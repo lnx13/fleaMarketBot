@@ -7,7 +7,16 @@ Bot framework https://github.com/python-telegram-bot/python-telegram-bot
 
 ## Окружение
 
-TBD
+Создать `db.py`:
+
+
+```python
+# Telegram API token. Напишите @BotFather, чтобы получить
+token = ''
+
+# DSN строка для подключения к БД
+db = 'sqlite:/path/to/database/file'
+```
 
 ## Register bot commands in BotFather
 
@@ -22,6 +31,7 @@ unsubscribe - отписаться от рассылки новых товаро
 add - добавить свой товар
 edit - отредактировать свой товар
 delete - удалить свой товар
+support - спросить поддержку
 ```
 
 
