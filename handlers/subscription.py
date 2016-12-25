@@ -1,3 +1,5 @@
+import time
+
 from db import database
 from models.Subscription import Subscription
 
@@ -18,8 +20,8 @@ def activate(bot, update):
 
 
 def deactivate(bot, update):
-    userID=update.message.from_user.id
-    chatID=update.message.chat_id
+    userID = update.message.from_user.id
+    chatID = update.message.chat_id
 
     subscription = database().subscription.get(userID=userID, chatID=chatID, all=False)
     if not subscription: update.message.reply_text('Это странно, но ты и так не подписан.')
@@ -33,7 +35,8 @@ class Notifier:
     """
     Sends notifications to the subscribed users
     """
-    def __init__(self, bot, item):
+
+    def __init__(self, bot, item, rate_per_second=20):
         """
 
         :type item: models.Item.Item
@@ -41,6 +44,7 @@ class Notifier:
         """
         self.bot = bot
         self.item = item
+        self.rate_per_second = rate_per_second
 
     def run(self):
         subscribers = self.get_subscribers()
@@ -50,14 +54,17 @@ class Notifier:
         return database().subscription.get()
 
     def spam(self, subscribers):
+        count = 0
         item = self.item
         bot = self.bot
 
         for subscriber in subscribers:
+            count += 1
+            if count % self.rate_per_second == 0: time.sleep(1)
             if item.get_photo():
                 if item.decorator().is_info_short():
-                    return bot.send_photo(subscriber.chatID, item.get_photo(), caption=item.decorator().get_info(separator='\n'))
-
+                    bot.send_photo(subscriber.chatID, item.get_photo(), caption=item.decorator().get_info(separator='\n'))
+                    continue
                 bot.send_photo(subscriber.chatID, item.get_photo())
 
             bot.send_message(subscriber.chatID, item.decorator().get_info(separator='\n'))
