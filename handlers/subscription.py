@@ -5,14 +5,13 @@ from models.Subscription import Subscription
 
 
 def activate(bot, update):
-    userID = update.message.from_user.id
     chatID = update.message.chat_id
 
-    if database().subscription.get(userID=userID, chatID=chatID, all=False):
+    if database().subscription.get(chatID=chatID, all=False):
         update.message.reply_text('Подписка уже активна. Скажи /unsubscribe, чтобы отписаться')
         return
 
-    subscription = Subscription(userID, chatID)
+    subscription = Subscription(chatID)
     database().subscription.save(subscription)
     update.message.reply_text('Подписка активирована. При добавлении нового объявления другим учатником, ты получишь '
                               'уведомление в этом чате и сможешь забрать крутую штукень первым!'
@@ -20,13 +19,12 @@ def activate(bot, update):
 
 
 def deactivate(bot, update):
-    userID = update.message.from_user.id
     chatID = update.message.chat_id
 
-    subscription = database().subscription.get(userID=userID, chatID=chatID, all=False)
+    subscription = database().subscription.get(chatID=chatID, all=False)
     if not subscription: update.message.reply_text('Это странно, но ты и так не подписан.')
 
-    database().subscription.unsubscribe(userID=userID, chatID=chatID)
+    database().subscription.unsubscribe(chatID)
     update.message.reply_text('Подписка деактивировна. Надеюсь, ты нашел всё, чего тебе не хватало!'
                               '\n\nЕсли соскучишься за новыми штуками - скажи /subscribe, я снова буду тебе спамить :)')
 

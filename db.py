@@ -32,8 +32,7 @@ class database(object):
             )
             subscriptions_table = Table(
                 'subscriptions', metadata,
-                Column('userID', Integer, primary_key=True),
-                Column('chatID', Integer, primary_key=True),
+                Column('chatID', String, primary_key=True),
             )
             metadata.create_all(engine)
             mapper(Item, items_table)
@@ -102,10 +101,9 @@ class SubscriptionRepository:
     def __init__(self, session):
         self.session = session
 
-    def get(self, userID=None, chatID=None, all=True, return_query=False):
+    def get(self, chatID=None, all=True, return_query=False):
         query = self.session.query(Subscription)
 
-        if userID:      query = query.filter(Subscription.userID == userID)
         if chatID:      query = query.filter(Subscription.chatID == chatID)
 
         if return_query: return query
@@ -119,6 +117,6 @@ class SubscriptionRepository:
         self.session.add(subscription)
         self.session.flush()
 
-    def unsubscribe(self, userID, chatID):
-        self.get(userID=userID, chatID=chatID, return_query=True).delete()
+    def unsubscribe(self, chatID):
+        self.get(chatID=chatID, return_query=True).delete()
         self.session.flush()
