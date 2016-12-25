@@ -94,7 +94,8 @@ def skip_description(bot, update, user_data):
     reply_keyboard = [['/skip', ]]
     item = user_data['item']
 
-    update.message.reply_text('Последний шаг. Отправте фото товара или нажмите "skip"',
+    update.message.reply_text('Последний шаг. Отправьте фото товара, или нажмите /skip, '
+                              'чтобы оставить существующее без изменений.',
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
                                   one_time_keyboard=True,
