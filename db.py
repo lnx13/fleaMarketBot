@@ -38,7 +38,7 @@ class database(object):
             metadata.create_all(engine)
             mapper(Item, items_table)
             mapper(Subscription, subscriptions_table)
-            database.Session = sessionmaker(bind=engine)
+            database.Session = sessionmaker(bind=engine, autocommit=True)
         self.session = database.Session()
         self.item = ItemRepository(self.session)
         self.subscription = SubscriptionRepository(self.session)
@@ -93,7 +93,7 @@ class ItemRepository:
 
     def save(self, item):
         self.session.add(item)
-        self.session.commit()
+        self.session.flush()
 
 
 class SubscriptionRepository:
@@ -117,9 +117,8 @@ class SubscriptionRepository:
 
     def save(self, subscription):
         self.session.add(subscription)
-        self.session.commit()
+        self.session.flush()
 
     def unsubscribe(self, userID, chatID):
         self.get(userID=userID, chatID=chatID, return_query=True).delete()
-        self.session.commit()
-
+        self.session.flush()

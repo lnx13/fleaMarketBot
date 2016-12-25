@@ -11,7 +11,7 @@ def delete_item(bot, update, groups):
 
     item.is_active = False
     update.message.reply_text('Товар "%s" был удалён' % item.decorator().get_title())
-    database().item.save_to_db(item)
+    database().item.save(item)
 
 
 def list_items(bot, update):
