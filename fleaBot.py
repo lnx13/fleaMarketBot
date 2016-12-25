@@ -28,7 +28,7 @@ def main():
     # Просмотр
     dp.add_handler(CommandHandler("list", list.all))
     #dp.add_handler(CommandHandler("view", view.all_items)) # so many messages
-    dp.add_handler(RegexHandler('^\/view(\d{1,})$', view.item, pass_groups=True))
+    dp.add_handler(RegexHandler('^\/view(\d+).*', view.item, pass_groups=True))
 
     # Подписка
     dp.add_handler(CommandHandler("subscribe", subscription.activate))
@@ -52,7 +52,7 @@ def main():
     dp.add_handler(CommandHandler("edit", edit.list_items))
 
     edit_handler = ConversationHandler(
-        entry_points=[RegexHandler('^/edit(\d+)$', edit.edit, pass_groups=True, pass_user_data=True)],
+        entry_points=[RegexHandler('^/edit(\d+).*', edit.edit, pass_groups=True, pass_user_data=True)],
 
         states={
             edit.NAME: [MessageHandler(Filters.text, edit.name, pass_user_data=True),
@@ -73,7 +73,7 @@ def main():
 
     # Удаление
     dp.add_handler(CommandHandler("delete", delete.list_items))
-    dp.add_handler(RegexHandler(u'^\/delete(\d{1,})$', delete.delete_item, pass_groups=True))
+    dp.add_handler(RegexHandler(u'^\/delete(\d+).*', delete.delete_item, pass_groups=True))
 
     # Другое
     dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', jokes.stilli))
