@@ -30,8 +30,19 @@ def add(bot, update, user_data):
 
     :type update: telegram.Update
     """
-    user_data['base'] = database()
     user = update.message.from_user
+    if not user.username:
+        update.message.reply_text(
+            'У тебя не установлено имя пользователя.\n'
+            'Я буду рассылать это объявление другим пользователями и им будет приятнее видеть различаемый логин, '
+            'вместо безликого id, вроде @%s.\n\n'
+            'Пожалуйста, установи себе логин и я с радостью помогу опубликовать товар.\n'
+            'Это нужно сделать один раз в настройках пользователя, вся процедура займёт не больше минуты.'
+            % user.id
+        )
+        return
+
+    user_data['base'] = database()
     update.message.reply_text(
         'Чтобы добавить товар на продажу, напишите его название. Если передумали, в любой момент можно написать /cancel',
         reply_markup=ReplyKeyboardRemove())

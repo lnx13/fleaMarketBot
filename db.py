@@ -4,6 +4,7 @@
 from sqlalchemy import Table, Column, Integer, String, Boolean, MetaData, or_
 from sqlalchemy import create_engine
 from sqlalchemy.orm import mapper, sessionmaker
+from sqlalchemy.sql.sqltypes import BigInteger
 
 import config
 from log import *
@@ -32,7 +33,7 @@ class database(object):
             )
             subscriptions_table = Table(
                 'subscriptions', metadata,
-                Column('chatID', String, primary_key=True),
+                Column('chatID', BigInteger, primary_key=True),
             )
             metadata.create_all(engine)
             mapper(Item, items_table)
