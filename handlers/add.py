@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from log import *
-from item import Items
-from db import database
-from telegram.ext import ConversationHandler
+from sqlalchemy import desc
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram.ext import ConversationHandler
+
+from db import database
+from log import *
+from models.Item import Items, Item
+from handlers.subscription import Notifier
 
 # add item conversation
 NAME, DESCRIPTION, PHOTO, PUBLISH = range(4)
@@ -106,8 +108,12 @@ def cancel(bot, update, user_data):
 def publish(bot, update, user_data):
     """publish item"""
     user = update.message.from_user
-    user_data['base'].save_to_db(Items.del_item(user.id))
+    item = Items.del_item(user.id)
+    user_data['base'].item.save(item)
     del user_data['base']
     update.message.reply_text('Товар добавлен!', reply_markup=ReplyKeyboardRemove())
+
+    newItem = database().item.get(userID=update.message.from_user.id, orderBy=desc(Item.id), limit=1, all=False)
+    Notifier(bot, newItem).run()
 
     return ConversationHandler.END

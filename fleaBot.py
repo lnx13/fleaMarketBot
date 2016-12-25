@@ -5,36 +5,16 @@
 Flea market bot
 """
 
-from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters, InlineQueryHandler
+from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters
 
-import delete
-from log import *
-import add
-import list
 import config
-import help
-import edit
-import view
+from handlers import add, edit, list, subscription, help, delete, view, start, jokes
+from log import *
+
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
-def start(bot, update):
-    """bot /start functions"""
-    update.message.reply_text('Хай! Я Барахолка-бот!\nНапиши /help, чтобы узнать о моих возможностях.')
-
-# def help(bot, update):
-#     update.message.reply_text(
-#         '/add - добавить товар\n'
-#         '/list - показать все товары, которые сейчас продаются\n'
-#         '/subscribe - подписаться на новые товары'
-#     )
-
-def subscribe(bot, update):
-    update.message.reply_text('Меня этому еще не научили ' u'\U0001F614' ' Попробуй позже')
-
-def stilli(bot, update):
-    update.message.reply_text('Стилли аццтой!(с)')
 
 def main():
     updater = Updater(config.token)
@@ -42,24 +22,21 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # Simple commands
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
+    # Базовые команды
+    dp.add_handler(CommandHandler("start", start.start))
+    dp.add_handler(CommandHandler("help", help.help))
 
-    dp.add_handler(CommandHandler("subscribe", subscribe))
-
+    # Просмотр
     dp.add_handler(CommandHandler("list", list.all))
     dp.add_handler(CommandHandler("view", view.all_items))
     dp.add_handler(RegexHandler(u'^\/view(\d{1,})$', view.item, pass_groups=True))
 
-    # Удаление
-    dp.add_handler(CommandHandler("delete", delete.list_items))
-    dp.add_handler(RegexHandler(u'^\/delete(\d{1,})$', delete.delete_item, pass_groups=True))
+    # Подписка
+    dp.add_handler(CommandHandler("subscribe", subscription.activate))
+    dp.add_handler(CommandHandler("unsubscribe", subscription.deactivate))
 
-    dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', stilli))
-
-    #Add item
-    add_handler = ConversationHandler(
+    # Добавление
+    dp.add_handler(ConversationHandler(
         entry_points=[CommandHandler('add', add.add, pass_user_data=True)],
 
         states={
@@ -67,18 +44,21 @@ def main():
             add.DESCRIPTION: [MessageHandler(Filters.text, add.description)],
             add.PHOTO: [MessageHandler(Filters.photo, add.photo),
                         CommandHandler('skip', add.skip_photo)],
-            add.PUBLISH: [CommandHandler('publish', add.publish, pass_user_data=True),],
+            add.PUBLISH: [CommandHandler('publish', add.publish, pass_user_data=True), ],
         },
 
-        fallbacks=[CommandHandler(u'отмена', add.cancel, pass_user_data=True)]
-    )
+        fallbacks=[CommandHandler(u'cancel', add.cancel, pass_user_data=True)]
+    ))
 
-    dp.add_handler(add_handler)
+    # Редактирование
+    dp.add_handler(CommandHandler("edit", edit.list_items))
 
-    #Del item
+    # Удаление
+    dp.add_handler(CommandHandler("delete", delete.list_items))
+    dp.add_handler(RegexHandler(u'^\/delete(\d{1,})$', delete.delete_item, pass_groups=True))
 
-    #Edit item
-    dp.add_handler(CommandHandler("edit", edit.list_available))
+    # Шутки
+    dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', jokes.stilli))
 
     # log all errors
     dp.add_error_handler(error)

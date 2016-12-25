@@ -1,11 +1,9 @@
-from sqlalchemy.orm.exc import NoResultFound
-
 from db import database
 
 
 def item(bot, update, groups):
     id = groups[0]
-    item = database().get(id=id, all=False)
+    item = database().item.get(id=id, all=False)
     if item is None:
         update.message.reply_text('Товар с идентификатором "%s" не найден' % id)
         return
@@ -14,7 +12,7 @@ def item(bot, update, groups):
 
 
 def all_items(bot, update):
-    items = database().get()
+    items = database().item.get()
     if len(items) == 0:
         update.message.reply_text('Нет ни одного товара')
         return

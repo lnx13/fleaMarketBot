@@ -6,7 +6,7 @@ from db import database
 
 
 def all(bot, update):
-    items = database().get()
+    items = database().item.get()
     if len(items) == 0:
         update.message.reply_text('Нет ни одного товара')
         return
@@ -15,7 +15,7 @@ def all(bot, update):
 
 
 def my_items(bot, update):
-    items = database().get(userID=update.message.from_user.id)
+    items = database().item.get(userID=update.message.from_user.id)
     if len(items) == 0:
         update.message.reply_text('У тебя нет ни одного товара. Пиши /add, чтобы добавить')
         return
