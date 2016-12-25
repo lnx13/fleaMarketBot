@@ -27,7 +27,7 @@ def main():
 
     # Просмотр
     dp.add_handler(CommandHandler("list", list.all))
-    dp.add_handler(CommandHandler("view", view.all_items))
+    #dp.add_handler(CommandHandler("view", view.all_items)) # so many messages
     dp.add_handler(RegexHandler('^\/view(\d{1,})$', view.item, pass_groups=True))
 
     # Подписка
@@ -50,6 +50,26 @@ def main():
 
     # Редактирование
     dp.add_handler(CommandHandler("edit", edit.list_items))
+
+    edit_handler = ConversationHandler(
+        entry_points=[RegexHandler('^/edit(\d+)$', edit.edit, pass_groups=True, pass_user_data=True)],
+
+        states={
+            edit.NAME: [MessageHandler(Filters.text, edit.name, pass_user_data=True),
+                        CommandHandler('skip', edit.skip_name, pass_user_data=True)],
+
+            edit.DESCRIPTION: [MessageHandler(Filters.text, edit.description, pass_user_data=True),
+                        CommandHandler('skip', edit.skip_description, pass_user_data=True)],
+
+            edit.PHOTO: [MessageHandler(Filters.photo, edit.photo, pass_user_data=True),
+                        CommandHandler('skip', edit.skip_photo, pass_user_data=True)],
+
+            edit.PUBLISH: [CommandHandler('publish', edit.publish, pass_user_data=True), ],
+        },
+
+        fallbacks=[CommandHandler('cancel', edit.cancel, pass_user_data=True)]
+    )
+    dp.add_handler(edit_handler)
 
     # Удаление
     dp.add_handler(CommandHandler("delete", delete.list_items))
