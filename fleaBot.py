@@ -64,7 +64,7 @@ def main():
             edit.PHOTO: [MessageHandler(Filters.photo, edit.photo, pass_user_data=True),
                         CommandHandler('skip', edit.skip_photo, pass_user_data=True)],
 
-            edit.PUBLISH: [CommandHandler('publish', edit.publish, pass_user_data=True), ],
+            edit.PUBLISH: [CommandHandler('save', edit.publish, pass_user_data=True), ],
         },
 
         fallbacks=[CommandHandler('cancel', edit.cancel, pass_user_data=True)]

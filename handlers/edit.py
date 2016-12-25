@@ -37,7 +37,9 @@ def edit(bot, update, groups, user_data):
         return
 
     user_data['item'] = item
-    update.message.reply_text('Текущее имя товара "%s", напишите новое имя или нажмите skip' % item.itemName,
+    update.message.reply_text('В сообщении ниже находится текущее имя товара. '
+                              'Напишите новое, или нажмите /skip, чтобы оставить его без изменений\n')
+    update.message.reply_text(item.itemName,
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
                                   one_time_keyboard=True,
@@ -64,7 +66,9 @@ def skip_name(bot, update, user_data):
     reply_keyboard = [['/skip', ]]
 
     item = user_data['item']
-    update.message.reply_text('Отлично! Текущее описание:\n%s\n\nНапишите новое описание или нажмите skip' % item.itemDescription,
+    update.message.reply_text('Отлично! В сообщении ниже находится текущее описание. '
+                              'Напишите новое, или нажмите /skip, чтобы оставить его без изменений\n')
+    update.message.reply_text(item.itemDescription,
                           reply_markup=ReplyKeyboardMarkup(
                               reply_keyboard,
                               one_time_keyboard=True,
@@ -104,7 +108,7 @@ def photo(bot, update, user_data):
     """change item photo"""
     item = user_data['item']
     photo_id = update.message.photo[-1].file_id
-    logger.info("Change item photo id from %s: %s" % (photo_id))
+    logger.info("Change item photo id %s" % (photo_id))
     item.add_photo(photo_id)
     skip_photo(bot, update, user_data)
 
@@ -131,7 +135,7 @@ def cancel(bot, update, user_data):
 def pre_publish(bot, update, user_data):
     """check item before publish"""
     item = user_data['item']
-    reply_keyboard = [['/publish', '/cancel', ]]
+    reply_keyboard = [['/save', '/cancel', ]]
     update.message.reply_text('Все верно?\n' + str(item),
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
@@ -143,6 +147,6 @@ def publish(bot, update, user_data):
     """publish item"""
     item = user_data['item']
     database().item.save(item)
-    update.message.reply_text('Товар добавлен!', reply_markup=ReplyKeyboardRemove())
+    update.message.reply_text('Товар сохранен!', reply_markup=ReplyKeyboardRemove())
 
     return ConversationHandler.END
