@@ -6,12 +6,15 @@ Flea market bot
 """
 
 from telegram.ext import Updater, CommandHandler, RegexHandler, ConversationHandler, MessageHandler, Filters, InlineQueryHandler
+
+import delete
 from log import *
 import add
 import list
 import config
 import help
 import edit
+import view
 
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
@@ -42,8 +45,17 @@ def main():
     # Simple commands
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("help", help))
-    dp.add_handler(CommandHandler("list", list.all))
+
     dp.add_handler(CommandHandler("subscribe", subscribe))
+
+    dp.add_handler(CommandHandler("list", list.all))
+    dp.add_handler(CommandHandler("view", view.all_items))
+    dp.add_handler(RegexHandler(u'^\/view(\d{1,})$', view.item, pass_groups=True))
+
+    # Удаление
+    dp.add_handler(CommandHandler("delete", delete.list_items))
+    dp.add_handler(RegexHandler(u'^\/delete(\d{1,})$', delete.delete_item, pass_groups=True))
+
     dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', stilli))
 
     #Add item
@@ -54,8 +66,8 @@ def main():
             add.NAME: [MessageHandler(Filters.text, add.name)],
             add.DESCRIPTION: [MessageHandler(Filters.text, add.description)],
             add.PHOTO: [MessageHandler(Filters.photo, add.photo),
-                    RegexHandler(u'^пропустить$', add.skip_photo)],
-            add.PUBLISH: [CommandHandler(u'добавить', add.publish, pass_user_data=True),],
+                        CommandHandler('skip', add.skip_photo)],
+            add.PUBLISH: [CommandHandler('publish', add.publish, pass_user_data=True),],
         },
 
         fallbacks=[CommandHandler(u'отмена', add.cancel, pass_user_data=True)]

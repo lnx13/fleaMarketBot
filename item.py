@@ -4,22 +4,31 @@ import time
 
 from telegram.user import User
 
-
 class ItemDecorator(object):
     def __init__(self, item):
         self.item = item
 
-    def shortInfo(self, maxlength=200):
+    def get_short_info(self, maxlength=200, separator=None):
         """strips item to max length"""
-        username = ' - %s' % self.getUser()
-        targetLength = maxlength - len(username)
-        shortInfo = ('%s - %s' % (self.item.itemName, self.item.itemDescription))
-        if len(shortInfo) > targetLength:
-            return shortInfo[:targetLength - 3] + '...' + username
+        if self.is_info_short(maxlength = maxlength):
+            return self.get_info(separator=separator)
 
-        return shortInfo + username
+        username = '... - %s' % self.get_user()
+        return self.get_info(append_username=False, separator=separator)[:maxlength-len(username)] + username
 
-    def getUser(self):
+    def get_info(self, append_username=True, separator=' - '):
+        result = '%s%s%s' % (self.item.itemName, separator, self.item.itemDescription)
+        if append_username: result += '%s%s' % (separator, self.get_user())
+
+        return result
+
+    def is_info_short(self, maxlength=200):
+        return len(self.get_info()) <= maxlength
+
+    def get_title(self):
+        return self.item.itemName
+
+    def get_user(self):
         return '@' + self.item.username
 
 
@@ -34,6 +43,7 @@ class Item(object):
         self.userID = userID
         self.username = username
         self.ts = int(time.time())
+        self.is_active = True
 
     def add_name(self, name):
         """add item name to object"""

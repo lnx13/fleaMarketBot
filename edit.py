@@ -10,6 +10,6 @@ def list_available(bot, update):
     lines = []
     i = 0
     for item in items:
-        lines.append('/%s - %s' % (++i, item.decorator().shortInfo(30)))
+        lines.append('/%s - %s' % (++i, item.decorator().get_short_info(60)))
 
     update.message.reply_text('\n'.join(lines))

@@ -14,7 +14,7 @@ NAME, DESCRIPTION, PHOTO, PUBLISH = range(4)
 def pre_publish(bot, update):
     """check item before publish"""
     user = update.message.from_user
-    reply_keyboard = [['/добавить', '/отмена', ]]
+    reply_keyboard = [['/publish', '/cancel', ]]
     update.message.reply_text('Все верно?\n' + str(Items.get_item(user.id)),
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
@@ -31,7 +31,7 @@ def add(bot, update, user_data):
     user_data['base'] = database()
     user = update.message.from_user
     update.message.reply_text(
-        'Что бы добавить товар на продажу, напишите его название. Если передумали в любой момент можно написать /отмена',
+        'Чтобы добавить товар на продажу, напишите его название. Если передумали, в любой момент можно написать /cancel',
         reply_markup=ReplyKeyboardRemove())
     Items.create_item(user.id, user.username)
 
@@ -53,14 +53,14 @@ def name(bot, update):
 
 def description(bot, update):
     """add item description"""
-    reply_keyboard = [['пропустить', ]]
+    reply_keyboard = [['/skip', ]]
 
     user = update.message.from_user
     itemDescription = update.message.text
     logger.info("Item description: %s" % (itemDescription))
     Items.add_description(user.id, itemDescription)
 
-    update.message.reply_text('Последний шаг. Отправте фото товара или нажмите "пропустить"',
+    update.message.reply_text('Последний шаг. Отправте фото товара, или нажмите "skip", чтобы пропустить фото.',
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
                                   one_time_keyboard=True,

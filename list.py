@@ -6,16 +6,26 @@ from db import database
 
 
 def all(bot, update):
-    """
-
-    :type update: telegram.Update
-    """
     items = database().get()
+    if len(items) == 0:
+        update.message.reply_text('Нет ни одного товара')
+        return
+
+    send_items(update, items)
+
+
+def my_items(bot, update):
+    items = database().get(userID=update.message.from_user.id)
+    if len(items) == 0:
+        update.message.reply_text('У тебя нет ни одного товара. Пиши /add, чтобы добавить')
+        return
+
+    send_items(update, items)
+
+
+def send_items(update, items):
+    result = []
     for item in items:
-        reply_item(update, item)
+        result.append('%s: %s - %s' % ('/view%s' % item.id, item.decorator().get_title(), item.decorator().get_user()))
 
-
-def reply_item(update, item):
-    if (item.itemPhoto):
-        update.message.reply_photo(item.itemPhoto)
-    update.message.reply_text('%s - %s - %s' % (item.itemName, item.itemDescription, item.getUser()))
+    update.message.reply_text('\n'.join(result))
