@@ -5,6 +5,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import ConversationHandler
 
 from db import database
+from handlers.system import silence_keeper
 from log import *
 from models.Item import Items, Item
 from handlers.subscription import Notifier
@@ -24,7 +25,7 @@ def pre_publish(bot, update):
                                   resize_keyboard=True
                               ))
 
-
+@silence_keeper
 def add(bot, update, user_data):
     """
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from handlers.system import silence_keeper
 from log import *
 from db import database
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
@@ -10,6 +10,7 @@ from telegram.ext import ConversationHandler
 NAME, DESCRIPTION, PHOTO, PUBLISH = range(4)
 
 
+@silence_keeper
 def list_items(bot, update):
     items = database().item.get(userID=update.message.from_user.id)
     if len(items) == 0:
@@ -27,6 +28,7 @@ def send_items(update, items):
     update.message.reply_text('\n'.join(result))
 
 
+@silence_keeper
 def edit(bot, update, groups, user_data):
     reply_keyboard = [['/skip', ]]
 
@@ -143,6 +145,7 @@ def pre_publish(bot, update, user_data):
                                   one_time_keyboard=True,
                                   resize_keyboard=True
                               ))
+
 
 def publish(bot, update, user_data):
     """publish item"""

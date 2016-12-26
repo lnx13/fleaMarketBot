@@ -16,6 +16,9 @@ token = ''
 
 # DSN строка для подключения к БД
 db = 'sqlite:/path/to/database/file'
+
+# Список идентификаторов чатов, в которых бот всегда будет предлагать общаться в ЛС
+silent_chats = []
 ```
 
 ## Register bot commands in BotFather

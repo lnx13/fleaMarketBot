@@ -3,8 +3,10 @@
 import telegram
 
 from db import database
+from handlers.system import silence_keeper
 
 
+@silence_keeper
 def all(bot, update):
     items = database().item.get()
     if len(items) == 0:
@@ -14,6 +16,7 @@ def all(bot, update):
     send_items(update, items)
 
 
+@silence_keeper
 def my_items(bot, update):
     items = database().item.get(userID=update.message.from_user.id)
     if len(items) == 0:

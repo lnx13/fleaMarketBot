@@ -3,8 +3,10 @@
 
 
 from db import database
+from handlers.system import silence_keeper
 
 
+@silence_keeper
 def delete_item(bot, update, groups):
     # todo: спросить, уверен ли
     id = groups[0]
@@ -18,6 +20,7 @@ def delete_item(bot, update, groups):
     database().item.save(item)
 
 
+@silence_keeper
 def list_items(bot, update):
     items = database().item.get(userID=update.message.from_user.id)
     if len(items) == 0:

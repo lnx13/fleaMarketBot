@@ -1,6 +1,8 @@
 from db import database
+from handlers.system import silence_keeper
 
 
+@silence_keeper
 def item(bot, update, groups):
     id = groups[0]
     item = database().item.get(id=id, all=False)
@@ -11,6 +13,7 @@ def item(bot, update, groups):
     respond_item(update, item)
 
 
+@silence_keeper
 def all_items(bot, update):
     items = database().item.get()
     if len(items) == 0:

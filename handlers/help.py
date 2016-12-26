@@ -1,4 +1,7 @@
+from handlers.system import silence_keeper
 
+
+@silence_keeper
 def help(bot, update):
     update.message.reply_text(
         '/help - показать это сообщение\n'

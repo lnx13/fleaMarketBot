@@ -1,9 +1,11 @@
 import time
 
 from db import database
+from handlers.system import silence_keeper
 from models.Subscription import Subscription
 
 
+@silence_keeper
 def activate(bot, update):
     chatID = update.message.chat_id
 
@@ -18,6 +20,7 @@ def activate(bot, update):
                               '\n\nЕсли уведомления тебе станут неинтересными - скажи /unsubscribe, чтобы отписаться.')
 
 
+@silence_keeper
 def deactivate(bot, update):
     chatID = update.message.chat_id
 
