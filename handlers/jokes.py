@@ -1,3 +1,10 @@
+import time
+
+lastTime = 0
 
 def stilli(bot, update):
-    update.message.reply_text('Стилли аццтой!(с)')
+    global lastTime
+    current_time = time.time()
+    if (current_time - lastTime) > 300: #не шутить слишком часто
+        lastTime = current_time
+        update.message.reply_text('Стилли аццтой!(c) :)')
