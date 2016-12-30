@@ -11,7 +11,7 @@ class ItemDecorator(object):
         return self.get_info(append_username=False, separator=separator)[:maxlength-len(username)] + username
 
     def get_info(self, append_username=True, separator=' - '):
-        result = '%s%s%s' % (self.item.itemName, separator, self.item.itemDescription)
+        result = '%s%s%s' % (self.item.itemName.upper(), separator, self.item.itemDescription)
         if append_username: result += '%s%s' % (separator, self.get_user())
 
         return result

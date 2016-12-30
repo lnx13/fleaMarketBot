@@ -18,7 +18,7 @@ def pre_publish(bot, update):
     """check item before publish"""
     user = update.message.from_user
     reply_keyboard = [['/publish', '/cancel', ]]
-    update.message.reply_text('Все верно?\n' + str(Items.get_item(user.id)),
+    update.message.reply_text('Все верно?\n' + Items.get_item(user.id).decorator().get_info(separator='\n'),
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
                                   one_time_keyboard=True,

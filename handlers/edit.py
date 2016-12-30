@@ -139,7 +139,7 @@ def pre_publish(bot, update, user_data):
     """check item before publish"""
     item = user_data['item']
     reply_keyboard = [['/save', '/cancel', ]]
-    update.message.reply_text('Все верно?\n' + str(item),
+    update.message.reply_text('Все верно?\n' + item.decorator().get_info(separator='\n'),
                               reply_markup=ReplyKeyboardMarkup(
                                   reply_keyboard,
                                   one_time_keyboard=True,
