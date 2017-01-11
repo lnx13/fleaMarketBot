@@ -76,7 +76,7 @@ def main():
     dp.add_handler(RegexHandler(u'^\/delete(\d+).*', delete.delete_item, pass_groups=True))
 
     # Другое
-    dp.add_handler(RegexHandler(u'.*(С|с)тил{1,2}и.*', jokes.stilli))
+    dp.add_handler(RegexHandler(u'.*(\s|^)(С|с)тил{1,2}и(\s|$).*', jokes.stilli))
     dp.add_handler(CommandHandler("support", support.support))
 
     # log all errors
