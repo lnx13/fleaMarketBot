@@ -3,6 +3,7 @@ import time
 from db import database
 from handlers.system import silence_keeper
 from models.Subscription import Subscription
+from log import *
 
 
 @silence_keeper
@@ -62,10 +63,14 @@ class Notifier:
         for subscriber in subscribers:
             count += 1
             if count % self.rate_per_second == 0: time.sleep(1)
-            if item.get_photo():
-                if item.decorator().is_info_short():
-                    bot.send_photo(subscriber.chatID, item.get_photo(), caption=item.decorator().get_info(separator='\n'))
-                    continue
-                bot.send_photo(subscriber.chatID, item.get_photo())
+            logger.info("Try send messege to subscriber {}".format(subscriber.chatID))
+            try:
+                if item.get_photo():
+                    if item.decorator().is_info_short():
+                        bot.send_photo(subscriber.chatID, item.get_photo(), caption=item.decorator().get_info(separator='\n'))
+                        continue
+                    bot.send_photo(subscriber.chatID, item.get_photo())
 
-            bot.send_message(subscriber.chatID, item.decorator().get_info(separator='\n'))
+                bot.send_message(subscriber.chatID, item.decorator().get_info(separator='\n'))
+            except:
+                logger.error("messege to subscriber {} doesnt sent".format(subscriber.chatID))
